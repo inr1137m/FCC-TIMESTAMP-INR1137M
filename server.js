@@ -19,11 +19,38 @@ app.get("/", function (req, res) {
 });
 
 
+app.get("/api/:date?", (req, res) => {
+
+  let input = req.params.date;
+  const datey = (datstr) => {
+    // console.log(datstr);
+    // return datstr;
+    var [a,b,c, ...args] = (datstr.split('+')[0]).split(' ');
+    [a,b,c] = [a+',',c,b];
+    // console.log([a,b,c, ...args].join(' '));
+    return [a,b,c, ...args].join(' ');
+  } 
+  if(input == '' || input == undefined){
+    let now = Date.now();
+    res.send({unix: now, utc: datey(Date(now)) });
+  } else if(parseInt(input) == input){
+    inpt = parseInt(input);
+    // console.log('milli ',typeof(input));
+    let res1 = {unix : inpt, utc: datey(new Date(inpt).toString())};
+    // console.log(res1);
+    res.send(res1);
+  } else if(new Date(input).toString() !== "Invalid Date"){
+    console.log('Date');
+    res.send({unix : Date.parse(input), utc: datey(new Date(input).toString())});
+  }else {
+    res.send({error: "Invalid Date"});
+  }
+});
+
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
-
 
 
 // listen for requests :)
